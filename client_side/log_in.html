@@ -272,6 +272,10 @@
             title: 'Access Granted',
             text: msg,
             confirmButtonText: 'Enter Portal'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = "client_dashboard.html";
+            }
           });
         } else {
           Swal.fire({
@@ -312,8 +316,8 @@
 
       if (p < width) { x = p; y = 0; rotation = 0; } else if (p < width + height) { x = width; y = p - width; rotation = 90; } else if
         (p < 2 * width + height) { x = width - (p - (width + height)); y = height; rotation = 180; } else {
-          x = 0; y = height - (p -
-            (2 * width + height)); rotation = 270;
+        x = 0; y = height - (p -
+          (2 * width + height)); rotation = 270;
       } led.style.left = `${x - 21}px`; led.style.top = `${y - 1.5}px`;
       led.style.transform = `rotate(${rotation}deg)`; requestAnimationFrame(animateLed);
     } animateLed(); </script>
