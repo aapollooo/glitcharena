@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Server Log In</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap');
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: 'Orbitron', sans-serif;
+			display: grid;
+			place-items: center;
+			padding: 16px;
+			background:
+				radial-gradient(circle at 20% 20%, rgba(255, 52, 52, 0.18), transparent 38%),
+				radial-gradient(circle at 80% 75%, rgba(255, 20, 20, 0.12), transparent 40%),
+				#08090c;
+			color: #ffffff;
+			overflow: hidden;
+		}
+
+		body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 36%, rgba(255, 255, 255, 0.015) 68%, transparent);
+			pointer-events: none;
+		}
+
+		.login-shell {
+			position: relative;
+			width: min(1060px, 95vw);
+			min-height: min(620px, 88vh);
+			display: grid;
+			grid-template-columns: minmax(280px, 390px) 1fr;
+			border-radius: 20px;
+			background: #060608;
+			border: 1px solid rgba(255, 60, 60, 0.28);
+			box-shadow: 0 22px 65px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 35, 35, 0.18) inset;
+			overflow: hidden;
+			animation: floatCard 5s ease-in-out infinite;
+			isolation: isolate;
+		}
+
+		.login-shell::before {
+			content: "";
+			position: absolute;
+			inset: -120% auto auto -35%;
+			width: 150%;
+			height: 220%;
+			background: linear-gradient(115deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 48%, rgba(255, 255, 255, 0.1) 100%);
+			transform: rotate(20deg);
+			animation: glossSweep 6s linear infinite;
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		.led-line {
+			position: absolute;
+			width: 42px;
+			height: 3px;
+			border-radius: 4px;
+			background: rgba(255, 70, 70, 0.95);
+			box-shadow: 0 0 8px rgba(255, 60, 60, 0.45), 0 0 14px rgba(255, 35, 35, 0.34);
+			pointer-events: none;
+			transform-origin: center;
+			z-index: 4;
+			opacity: 0.85;
+		}
+
+		.left-panel {
+			position: relative;
+			z-index: 2;
+			background: linear-gradient(165deg, rgba(8, 8, 12, 0.97), rgba(2, 2, 4, 0.95));
+			border-right: 1px solid rgba(255, 65, 65, 0.18);
+			padding: 42px 34px 36px;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+		}
+
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			font-size: 12px;
+			letter-spacing: 2px;
+			color: rgba(255, 170, 170, 0.86);
+			margin-bottom: 24px;
+		}
+
+		.form-wrap h1 {
+			margin: 0 0 20px;
+			font-size: clamp(30px, 4vw, 38px);
+			letter-spacing: 1px;
+			color: #ffffff;
+		}
+
+		#serverLoginForm {
+			margin-top: 12px;
+		}
+
+		.field-group {
+			margin-bottom: 18px;
+		}
+
+		.field-group label {
+			display: block;
+			font-size: 11px;
+			letter-spacing: 1.2px;
+			margin-bottom: 8px;
+			color: rgba(255, 188, 188, 0.85);
+		}
+
+		.input-wrap {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			width: 100%;
+			border: 1px solid rgba(255, 55, 55, 0.42);
+			border-radius: 6px;
+			padding: 10px 12px;
+			background: rgba(10, 10, 14, 0.65);
+			transition: border-color 0.25s ease, box-shadow 0.25s ease;
+			box-shadow: 0 8px 16px -18px rgba(255, 30, 30, 0.9);
+		}
+
+		.input-wrap:focus-within {
+			border-color: rgba(255, 85, 85, 0.95);
+			box-shadow: 0 8px 16px -16px rgba(255, 45, 45, 1), 0 0 0 1px rgba(255, 45, 45, 0.22);
+		}
+
+		.icon {
+			color: rgba(255, 170, 170, 0.95);
+			font-size: 14px;
+			min-width: 12px;
+			line-height: 1;
+		}
+
+		input {
+			border: none;
+			outline: none;
+			width: 100%;
+			background: transparent;
+			color: #fff;
+			font-size: 13px;
+			font-family: inherit;
+		}
+
+		input::placeholder {
+			color: rgba(255, 176, 176, 0.6);
+		}
+
+		.helper-link {
+			display: inline-block;
+			margin-top: 2px;
+			margin-bottom: 18px;
+			font-size: 10px;
+			letter-spacing: 0.7px;
+			color: rgba(255, 175, 175, 0.76);
+			text-decoration: none;
+		}
+
+		.helper-link:hover {
+			color: rgba(255, 225, 225, 0.94);
+		}
+
+		.submit-btn {
+			width: 100%;
+			padding: 12px;
+			border-radius: 6px;
+			border: none;
+			font-family: inherit;
+			font-size: 12px;
+			font-weight: 700;
+			letter-spacing: 1px;
+			color: #fff;
+			cursor: pointer;
+			background: linear-gradient(90deg, #ff1212, #ff4d4d);
+			box-shadow: 0 10px 22px rgba(255, 24, 24, 0.45);
+			transition: transform 0.28s ease, box-shadow 0.28s ease;
+		}
+
+		.submit-btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 12px 26px rgba(255, 24, 24, 0.64);
+		}
+
+		.signup-note {
+			margin-top: 26px;
+			font-size: 10px;
+			letter-spacing: 0.7px;
+			color: rgba(255, 195, 195, 0.72);
+		}
+
+		.signup-note a {
+			color: rgba(255, 235, 235, 0.9);
+			text-decoration: none;
+		}
+
+		.right-panel {
+			position: relative;
+			z-index: 1;
+			background:
+				linear-gradient(0deg, rgba(3, 4, 8, 0.64), rgba(3, 4, 8, 0.64)),
+				linear-gradient(125deg, rgba(45, 47, 55, 0.45), rgba(8, 9, 12, 0.9));
+			display: flex;
+			align-items: center;
+			padding: clamp(26px, 6vw, 64px);
+			overflow: hidden;
+		}
+
+		.right-panel::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background:
+				repeating-linear-gradient(20deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 12px),
+				radial-gradient(circle at 78% 20%, rgba(255, 90, 90, 0.22), transparent 42%);
+			mix-blend-mode: screen;
+			opacity: 0.75;
+			pointer-events: none;
+		}
+
+		.hero-copy {
+			max-width: 380px;
+			position: relative;
+			z-index: 1;
+		}
+
+		.hero-copy p {
+			margin: 0;
+			line-height: 1.7;
+			color: rgba(255, 235, 235, 0.9);
+			font-size: clamp(13px, 1.6vw, 17px);
+			text-wrap: pretty;
+		}
+
+		.learn-link {
+			display: inline-block;
+			margin-top: 18px;
+			font-size: 10px;
+			letter-spacing: 1px;
+			color: rgba(255, 195, 195, 0.86);
+			text-decoration: none;
+			border-bottom: 1px solid rgba(255, 150, 150, 0.45);
+			padding-bottom: 4px;
+		}
+
+		@keyframes floatCard {
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-6px);
+			}
+		}
+
+		@keyframes glossSweep {
+			0% {
+				transform: translateX(-28%) rotate(20deg);
+				opacity: 0.08;
+			}
+
+			35% {
+				opacity: 0.18;
+			}
+
+			100% {
+				transform: translateX(30%) rotate(20deg);
+				opacity: 0.06;
+			}
+		}
+
+		@media (max-width: 860px) {
+			.login-shell {
+				grid-template-columns: 1fr;
+				min-height: auto;
+			}
+
+			.left-panel {
+				border-right: 0;
+				border-bottom: 1px solid rgba(255, 65, 65, 0.2);
+			}
+
+			.right-panel {
+				min-height: 240px;
+			}
+		}
+
+		/* Adding some custom styles for SweetAlert to match the theme */
+		.swal2-popup {
+			background: #060608 !important;
+			color: #fff !important;
+			border: 1px solid rgba(255, 60, 60, 0.28) !important;
+		}
+
+		.swal2-title {
+			color: #fff !important;
+		}
+
+		.swal2-confirm {
+			background: linear-gradient(90deg, #ff1212, #ff4d4d) !important;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+	<main class="login-shell" id="loginShell">
+		<div class="led-line" id="led"></div>
+
+		<section class="left-panel">
+			<div>
+				<span class="brand">SERVER PORTAL</span>
+
+				<div class="form-wrap">
+					<h1>Sign In</h1>
+					<form id="serverLoginForm" action="#" method="post">
+						<div class="field-group">
+							<label for="username">Administrator</label>
+							<div class="input-wrap">
+								<span class="icon">⊙</span>
+								<input id="username" name="username" type="text" placeholder="Enter User Name" required>
+							</div>
+						</div>
+
+						<div class="field-group">
+							<label for="password">Password</label>
+							<div class="input-wrap">
+								<span class="icon">◆</span>
+								<input id="password" name="password" type="password" placeholder="Enter Password"
+									required>
+							</div>
+						</div>
+
+						<button class="submit-btn" type="submit">SIGN IN</button>
+					</form>
+				</div>
+			</div>
+		</section>
+
+		<section class="right-panel">
+			<div class="hero-copy">
+				<p>A new way to experience system control in a secure virtual environment.</p>
+				<a class="learn-link" href="#">LEARN MORE</a>
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const shell = document.getElementById("loginShell");
+		const led = document.getElementById("led");
+		let perimeter = 0;
+
+		function animateLed() {
+			const rect = shell.getBoundingClientRect();
+			const width = rect.width;
+			const height = rect.height;
+			perimeter += 1.6;
+
+			const total = 2 * (width + height);
+			const p = perimeter % total;
+
+			let x = 0;
+			let y = 0;
+			let rotation = 0;
+
+			if (p < width) {
+				x = p;
+				y = 0;
+				rotation = 0;
+			} else if (p < width + height) {
+				x = width;
+				y = p - width;
+				rotation = 90;
+			} else if (p < (2 * width) + height) {
+				x = width - (p - (width + height));
+				y = height;
+				rotation = 180;
+			} else {
+				x = 0;
+				y = height - (p - ((2 * width) + height));
+				rotation = 270;
+			}
+
+			led.style.left = `${x - 21}px`;
+			led.style.top = `${y - 1.5}px`;
+			led.style.transform = `rotate(${rotation}deg)`;
+
+			requestAnimationFrame(animateLed);
+		}
+
+		animateLed();
+
+		document.getElementById("serverLoginForm").addEventListener("submit", async function (event) {
+			event.preventDefault();
+
+			const formData = new FormData(this);
+
+			try {
+				const response = await fetch('api/admin/login.php', {
+					method: 'POST',
+					body: formData
+				});
+
+				const data = await response.json();
+
+				if (data.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Access Granted',
+						text: data.message,
+						timer: 1500,
+						showConfirmButton: false
+					}).then(() => {
+						window.location.href = "dashboard.html";
+					});
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: 'Access Denied',
+						text: data.message
+					});
+				}
+			} catch (error) {
+				console.error(error);
+				Swal.fire({
+					icon: 'error',
+					title: 'System Error',
+					text: 'An error occurred while communicating with the server.'
+				});
+			}
+		});
+	</script>
+</body>
+
+</html>

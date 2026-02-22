@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Logs | Time System</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --bg-color: #08090c;
+            --card-bg: rgba(10, 10, 14, 0.65);
+            --card-border: rgba(255, 55, 55, 0.42);
+            --accent: #ff2323;
+            --accent-hover: #ff4d4d;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 188, 188, 0.85);
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 20% 20%, rgba(255, 52, 52, 0.08), transparent 38%), radial-gradient(circle at 80% 75%, rgba(255, 20, 20, 0.05), transparent 40%);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .brand-text {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .sidebar {
+            background: linear-gradient(165deg, rgba(8, 8, 12, 0.97), rgba(2, 2, 4, 0.95));
+            border-right: 1px solid var(--card-border);
+            min-height: 100vh;
+            box-shadow: 0 0 15px rgba(255, 30, 30, 0.1);
+        }
+
+        .sidebar-link {
+            color: var(--text-muted);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: rgba(255, 35, 35, 0.15);
+            color: #fff;
+            border-left: 4px solid var(--accent);
+        }
+
+        .brand-text {
+            color: rgba(255, 170, 170, 0.95);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: inset 0 0 0 1px rgba(255, 35, 35, 0.18);
+        }
+
+        .topbar {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* DataTable Overrides */
+        div.dataTables_wrapper div.dataTables_filter input,
+        div.dataTables_wrapper div.dataTables_length select {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: white;
+        }
+
+        .table-dark th {
+            background-color: rgba(255, 35, 35, 0.1) !important;
+            color: #fff;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .table-dark td {
+            background-color: transparent !important;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logout-btn {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .logout-btn:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3">
+                <div class="text-center mb-5 mt-3">
+                    <i class="bi bi-cpu text-danger fs-1"></i>
+                    <h5 class="brand-text mt-2">Server Portal</h5>
+                </div>
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="sidebar-link" href="dashboard.html"><i
+                                    class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="sidebar-link" href="clients.html"><i
+                                    class="bi bi-people-fill"></i> Users & Cards</a></li>
+                        <li class="nav-item"><a class="sidebar-link" href="topup.html"><i class="bi bi-wallet-fill"></i>
+                                Top Up</a></li>
+                        <li class="nav-item"><a class="sidebar-link active" href="logs.html"><i
+                                    class="bi bi-journal-text"></i> Transactions</a></li>
+                    </ul>
+                    <div class="mt-5 text-center px-3">
+                        <a href="server_log-in.html" class="logout-btn w-100 d-block py-2 border border-danger rounded">
+                            <i class="bi bi-box-arrow-right"></i> Disconnect
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pb-5">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 topbar">
+                    <h1 class="h2 text-white m-0">Transaction Logs</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="glass-card">
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="text-white m-0">All System Transactions</h4>
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-danger active filter-btn"
+                                        data-type="all">All</button>
+                                    <button class="btn btn-outline-danger filter-btn" data-type="topup">Top-Ups</button>
+                                    <button class="btn btn-outline-danger filter-btn"
+                                        data-type="deduction">Deductions</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table id="logsTable" class="table table-dark table-hover w-100 align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Trans ID</th>
+                                            <th>User</th>
+                                            <th>Type</th>
+                                            <th>Amount (₱)</th>
+                                            <th>Description</th>
+                                            <th>Date / Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const logsTable = $('#logsTable').DataTable({
+                pageLength: 10,
+                lengthMenu: [10, 25, 50, 100],
+                order: [[0, "desc"]], // Sort by Transaction ID descending
+                dom: '<"row"<"col-md-6"l><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                language: { emptyTable: "No transactions found" }
+            });
+
+            function loadLogs(filterType = 'all') {
+                fetch(`api/admin/logs.php?type=${filterType}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            logsTable.clear();
+                            data.data.forEach(t => {
+                                let badge = t.type === 'topup'
+                                    ? '<span class="badge bg-success bg-opacity-25 text-success border border-success rounded-pill px-3 py-1"><i class="bi bi-arrow-down-circle"></i> TOP-UP</span>'
+                                    : '<span class="badge bg-danger bg-opacity-25 text-danger border border-danger rounded-pill px-3 py-1"><i class="bi bi-arrow-up-circle"></i> DEDUCTION</span>';
+
+                                let amountClass = t.type === 'topup' ? 'text-success' : 'text-danger';
+                                let amountStr = t.type === 'topup' ? `+₱${Number(t.amount).toFixed(2)}` : `-₱${Number(t.amount).toFixed(2)}`;
+
+                                logsTable.row.add([
+                                    `#${t.id}`,
+                                    t.user_name || '<i class="text-white-50">Unknown User</i>',
+                                    badge,
+                                    `<span class="fw-bold ${amountClass}">${amountStr}</span>`,
+                                    t.description || '-',
+                                    new Date(t.created_at).toLocaleString()
+                                ]);
+                            });
+                            logsTable.draw();
+                        }
+                    });
+            }
+
+            loadLogs();
+
+            $('.filter-btn').on('click', function () {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                loadLogs($(this).data('type'));
+            });
+        });
+    </script>
+</body>
+
+</html>
